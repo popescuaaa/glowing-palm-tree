@@ -1,7 +1,34 @@
-from flask import Flask, request, jsonify
-import requests
+from flask import Flask, request, jsonify, Response
+from api import exchange, query, account
+from plaid.api import plaid_api
+from dotenv import load_dotenv
+import plaid
+import flask
+import os
+
 
 app = Flask(__name__)
+
+
+"""
+ Plaid API client 
+"""
+
+load_dotenv(
+    dotenv_path=".env", verbose=True
+)
+
+configuration = plaid.Configuration(
+    host=plaid.Environment.Sandbox,
+    api_key={
+        'clientId': os.getenv('PLAID_CLIENT_ID'),
+        'secret': os.getenv('PLAID_SECRET'),
+        'plaidVersion': '2020-09-14'
+    }
+)
+
+api_client = plaid.ApiClient(configuration)
+client = plaid_api.PlaidApi(api_client)
 
 
 @app.route("/")
@@ -19,8 +46,9 @@ def exchange():
     - Returns a 201 status code and nothing else.
     - Plaid’s documentation on the exchange endpoint
     """
-    data = request.get_json()
-    return jsonify(data)
+    public_token = request.form['public_token']
+    print(public_token)
+    return Response(status=201)
 
 
 @app.route("/api/query", methods=['POST'])
