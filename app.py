@@ -25,7 +25,7 @@ def health_check():
 
 
 @app.route("/api/example", methods=['POST'])
-@cache.cached(timeout=30, query_string=True)
+@cache.cached(timeout=60, query_string=True)
 def example():
     param = request.form['param']
     return api_method.api_method(param=param)
